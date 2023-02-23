@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bezier Curve</title>
+  <title>Canvas Renderer</title>
   <style>
     * {
       margin: 0;
@@ -41,7 +41,7 @@
     // 注册点击事件
     startCircle.onClick = () => {
       startCircle.setAttr({
-        color: 'black'
+        color: startCircle.color === 'white' ? 'black' : 'white'
       });
     }
 
