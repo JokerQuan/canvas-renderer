@@ -22,16 +22,17 @@
   <div id="container"></div>
   <script src="./point.js"></script>
   <script src="./circle.js"></script>
+  <script src="./square.js"></script>
   <script src="./line.js"></script>
   <script src="./bezier.js"></script>
   <script src="./renderer.js"></script>
   <script>
     const canvas = new CanvasRenderer("#container");
 
-    const start = new Point(10, 390);
-    const end = new Point(590, 10);
-    const ctl1 = new Point(150, 100);
-    const ctl2 = new Point(450, 300);
+    const start = canvas.addCtrlPoint(10, 390);
+    const end = canvas.addCtrlPoint(590, 10);
+    const ctl1 = canvas.addCtrlPoint(150, 100);
+    const ctl2 = canvas.addCtrlPoint(450, 300);
 
     const startCircle = canvas.addCircle('start', start, 8, {
       drag: true,
@@ -77,6 +78,11 @@
       width: 6,
       color: 'black'
     });
+
+    const sp = canvas.addCtrlPoint(0, 0);
+    // 正方形
+    const s = canvas.addSquare('s', sp, 30, { drag: true });
+    s.setAttr({style: 'fill'});
 
   </script>
 </body>
