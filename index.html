@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bezier Curve</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    #container {
+      margin: 50px;
+      width: 600px;
+      height: 400px;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+  <script src="./point.js"></script>
+  <script src="./circle.js"></script>
+  <script src="./line.js"></script>
+  <script src="./bezier.js"></script>
+  <script src="./renderer.js"></script>
+  <script>
+    const canvas = new CanvasRenderer("#container");
+
+    const start = new Point(10, 390);
+    const end = new Point(590, 10);
+    const ctl1 = new Point(150, 100);
+    const ctl2 = new Point(450, 300);
+
+    const startCircle = canvas.addCircle('start', start, 8, {
+      drag: true,
+      layer: 1
+    });
+
+    // 注册点击事件
+    startCircle.onClick = () => {
+      startCircle.setAttr({
+        color: 'black'
+      });
+    }
+
+    canvas.addCircle('end', end, 8, {
+      drag: true,
+      layer: 1
+    });
+    
+    canvas.addCircle('ctl1', ctl1, 8, {
+      color: 'red',
+      layer: 1,
+      drag: true
+    });
+
+    canvas.addCircle('ctl2', ctl2, 8, {
+      color: 'blue',
+      layer: 1,
+      drag: true
+    });
+
+    // 辅助线
+    canvas.addLine('line1', start, ctl1);
+    canvas.addLine('line2', end, ctl2);
+
+    // 起点终点直线
+    canvas.addLine('line3', start, end, {
+      width: 6,
+      color: 'rgba(200, 200, 200, .6)'
+    });
+
+    // 贝塞尔曲线
+    canvas.addBezierCurve('bezier-demo', start, end, ctl1, ctl2, {
+      width: 6,
+      color: 'black'
+    });
+
+  </script>
+</body>
+</html>
