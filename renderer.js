@@ -5,6 +5,7 @@ class CanvasRenderer {
 
   // 按图层保存元素
   _layers = [];
+  _allPointsSet = new Set();
 
   constructor(containerSel) {
     this._container = document.querySelector(containerSel);
@@ -30,22 +31,35 @@ class CanvasRenderer {
     let downPointOffsetX = 0;
     let downPointOffsetY = 0;
 
+    let downPageX = 0;
+    let downPageY = 0;
+
     // 区分拖拽和点击
     let isClick = true;
 
     let targetEle = null;
     const moveFn = (moveEvent) => {
-      isClick = false;
-      let canvasX = moveEvent.pageX - this._container.offsetLeft - downPointOffsetX;
-      let canvasY = moveEvent.pageY - this._container.offsetTop - downPointOffsetY;
 
-      // 处理边界
-      if (canvasX < 0) canvasX = 0;
-      if (canvasX > this._canvas.width) canvasX = this._canvas.width;
-      if (canvasY < 0) canvasY = 0;
-      if (canvasY > this._canvas.height) canvasY = this._canvas.height;
-
-      targetEle.moveTo(canvasX, canvasY);
+      // 没有目标元素，则是画布拖拽
+      if (!targetEle) {
+        const offsetX = moveEvent.pageX - downPageX;
+        const offsetY = moveEvent.pageY - downPageY;
+        downPageX = moveEvent.pageX;
+        downPageY = moveEvent.pageY;
+        this._moveAllPoints(offsetX, offsetY);
+      } else {
+        isClick = false;
+        let canvasX = moveEvent.pageX - this._container.offsetLeft - downPointOffsetX;
+        let canvasY = moveEvent.pageY - this._container.offsetTop - downPointOffsetY;
+  
+        // 处理边界
+        if (canvasX < 0) canvasX = 0;
+        if (canvasX > this._canvas.width) canvasX = this._canvas.width;
+        if (canvasY < 0) canvasY = 0;
+        if (canvasY > this._canvas.height) canvasY = this._canvas.height;
+  
+        targetEle.moveTo(canvasX, canvasY);
+      }
 
       // 更新
       this.render();
@@ -54,23 +68,26 @@ class CanvasRenderer {
     this._canvas.addEventListener('mousedown', (e) => {
       targetEle = this._pointInWitchElement(e.offsetX, e.offsetY);
 
-      if (!targetEle) return;
-      if (!targetEle.drag) return;
-
-      downPointOffsetX = e.offsetX - targetEle.basePoint.x;
-      downPointOffsetY = e.offsetY - targetEle.basePoint.y;
+      if (targetEle && targetEle.drag) {
+        downPointOffsetX = e.offsetX - targetEle.basePoint.x;
+        downPointOffsetY = e.offsetY - targetEle.basePoint.y;
+      } else {
+        downPageX = e.pageX;
+        downPageY = e.pageY;
+      }
 
       document.addEventListener('mousemove', moveFn);
     });
 
     document.addEventListener('mouseup', (e) => {
+      document.removeEventListener('mousemove', moveFn);
+      
       if (!targetEle) return;
       if (isClick && typeof targetEle.onClick === 'function') {
+        // todo 模拟事件冒泡
         targetEle.onClick();
         this.render(); // 点击事件可能修改了相关属性，需要重新render
       }
-
-      document.removeEventListener('mousemove', moveFn);
       isClick = true;
     });
   }
@@ -93,11 +110,21 @@ class CanvasRenderer {
     return target;
   }
 
+  _moveAllPoints(offsetX, offsetY) {
+    Array.from(this._allPointsSet).forEach(p => {
+      p.x += offsetX;
+      p.y += offsetY;
+    });
+    this.render();
+  }
+
   addLine(id, p1, p2, options = {}) {
     const layer = options.layer || 0;
     this._layers[layer] = this._layers[layer] || [];
     const line = new Line(id, p1, p2, this._ctx, options);
     this._layers[layer].push(line);
+    this._allPointsSet.add(p1);
+    this._allPointsSet.add(p2);
     this.render();
     return line;
   }
@@ -107,6 +134,10 @@ class CanvasRenderer {
     this._layers[layer] = this._layers[layer] || [];
     const bezier = new Bezier(id, start, end, ctl1, ctl2, this._ctx, options);
     this._layers[layer].push(bezier);
+    this._allPointsSet.add(start);
+    this._allPointsSet.add(end);
+    this._allPointsSet.add(ctl1);
+    this._allPointsSet.add(ctl2);
     this.render();
     return bezier;
   }
@@ -116,6 +147,7 @@ class CanvasRenderer {
     const layer = options.layer || 0;
     this._layers[layer] = this._layers[layer] || [];
     this._layers[layer].push(circle);
+    this._allPointsSet.add(p);
     this.render();
     return circle;
   }
