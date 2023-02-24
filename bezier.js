@@ -12,7 +12,6 @@ class Bezier{
     this.color = options.color || 'black';
     this.layer = options.layer || 0;
 
-    this.render();
   }
 
   setAttr(obj) {
@@ -24,16 +23,16 @@ class Bezier{
 
   render() {
     const { start, end, ctl1, ctl2, width, color } = this;
-      this.ctx.lineWidth = width;
-      this.ctx.strokeStyle = color;
-      this.ctx.beginPath();
-      this.ctx.moveTo(start.x, start.y);
-      this.ctx.bezierCurveTo(
-        ctl1.x, ctl1.y, 
-        ctl2.x, ctl2.y, 
-        end.x, end.y
-      );
-      this.ctx.stroke();
-      this.ctx.closePath();
+    this.ctx.lineWidth = width;
+    this.ctx.strokeStyle = color;
+    this.ctx.beginPath();
+    this.ctx.moveTo(start.x, start.y);
+    this.ctx.bezierCurveTo(
+      ctl1.x, ctl1.y, 
+      ctl2.x, ctl2.y, 
+      end.x, end.y
+    );
+    this.ctx.stroke();
+    this.ctx.closePath();
   }
 }

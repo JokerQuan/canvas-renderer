@@ -11,14 +11,12 @@ class Square{
     this.drag = options.drag === true ? true : false;
     this.layer = options.layer || 0;
 
-    this.render();
   }
 
   setAttr(obj) {
     for (let key in obj){
       this[key] = obj[key];
     }
-    this.render();
   }
 
   moveTo(x, y) {

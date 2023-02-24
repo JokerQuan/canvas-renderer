@@ -11,7 +11,6 @@ class Circle{
     this.drag = options.drag === true ? true : false;
     this.layer = options.layer || 0;
 
-    this.render();
   }
 
   setAttr(obj) {

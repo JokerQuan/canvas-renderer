@@ -132,7 +132,6 @@ class CanvasRenderer {
     this._layers[layer] = this._layers[layer] || [];
     const line = new Line(id, p1, p2, this._ctx, options);
     this._layers[layer].push(line);
-    this.render();
     return line;
   }
 
@@ -141,7 +140,6 @@ class CanvasRenderer {
     this._layers[layer] = this._layers[layer] || [];
     const bezier = new Bezier(id, start, end, ctl1, ctl2, this._ctx, options);
     this._layers[layer].push(bezier);
-    this.render();
     return bezier;
   }
 
@@ -150,7 +148,6 @@ class CanvasRenderer {
     const layer = options.layer || 0;
     this._layers[layer] = this._layers[layer] || [];
     this._layers[layer].push(circle);
-    this.render();
     return circle;
   }
 
@@ -159,7 +156,6 @@ class CanvasRenderer {
     const layer = options.layer || 0;
     this._layers[layer] = this._layers[layer] || [];
     this._layers[layer].push(square);
-    this.render();
     return square;
   }
 

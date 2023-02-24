@@ -10,7 +10,6 @@ class Line{
     this.color = options.color || 'black';
     this.layer = options.layer || 0;
 
-    this.render();
   }
 
   setAttr(obj) {
