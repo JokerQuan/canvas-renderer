@@ -91,7 +91,8 @@
       s.setAttr({style: 'fill'});
 
       // 不随画布移动的元素
-      canvas.addElement(new Rect('no-move', {x: 500, y:250}, 30, 50, { 
+      const nomove = canvas.addCtrlPoint(500, 250, true);
+      canvas.addElement(new Rect('no-move', nomove, 30, 50, { 
         drag: true,
         layer: 10
       }));

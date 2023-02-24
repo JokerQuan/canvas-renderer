@@ -9,6 +9,18 @@ class CanvasRenderer {
 
   _options = {};
 
+  /**
+   * 对外接口：
+   *  1、addCtrlPoint， 添加控制点，控制点不渲染，主要用于多个元素之间的联动
+   *  2、addElement, 添加元素，支持自定义元素
+   *  3、render，渲染全部元素
+   * todo：
+   *  4、update，优化方法，检测元素是否在可视区域内，如果不在则不渲染
+   *  5、onCanvasDrag，画布拖动回调
+   *  6、removeCtrl，移除控制点，需要考虑与控制点关联的元素，可能需要重新设计数据结构
+   *  7、removeElement, 移除元素，同样需要考虑与控制点的关联关系
+   *  8、图层相关的操作
+   */
   constructor(containerSel, options = {}) {
     this._container = document.querySelector(containerSel);
     this._container.style.position = 'relative';
@@ -124,15 +136,17 @@ class CanvasRenderer {
 
   _moveAllPoints(offsetX, offsetY) {
     this._ctrlPoints.forEach(p => {
-      p.x += offsetX;
-      p.y += offsetY;
+      if (!p.fixed) {
+        p.x += offsetX;
+        p.y += offsetY;
+      }
     });
     this.render();
   }
 
   // 基于控制点创建的元素，可以随画布拖拽移动
-  addCtrlPoint(x, y) {
-    const point = new Point(x, y);
+  addCtrlPoint(x, y, fixed = false) {
+    const point = new Point(x, y, fixed);
     this._ctrlPoints.push(point);
     return point;
   }
