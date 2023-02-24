@@ -98,11 +98,11 @@ class CanvasRenderer {
   // 查找点在哪个元素内，都不在则返回 null
   _pointInWitchElement(x, y) {
     // 图层越高优先级越高
-    // 同一图层，元素越靠后（即后加入），优先级越高
     let target = null;
     const len = this._layers.length;
     for (let i = len - 1; i >= 0; i--) {
       if (!this._layers[i]) continue;
+      // 同一图层，元素越靠后（即后加入），优先级越高
       const reversedEle = this._layers[i].toReversed();
       target = reversedEle.find(ele => {
         if (typeof ele.containPoint !== 'function') return false;
@@ -121,42 +121,28 @@ class CanvasRenderer {
     this.render();
   }
 
+  // 基于控制点创建的元素，可以随画布拖拽移动
   addCtrlPoint(x, y) {
     const point = new Point(x, y);
     this._ctrlPoints.push(point);
     return point;
   }
 
-  addLine(id, p1, p2, options = {}) {
-    const layer = options.layer || 0;
+  /**
+   * 
+   * @param {*} ele 自定义 canvas 元素
+   * 自定义元素规则：
+   *  1、必须实现 bindCtx、render 函数
+   *  2、如果需要点击功能，必须实现 containPoint 函数
+   *  3、如果需要拖拽功能，必须实现 containPoint 函数、moveTo 函数、basePoint 属性
+   * @returns 
+   */
+  addElement(ele) {
+    ele.bindCtx(this._ctx);
+    const layer = ele.layer;
     this._layers[layer] = this._layers[layer] || [];
-    const line = new Line(id, p1, p2, this._ctx, options);
-    this._layers[layer].push(line);
-    return line;
-  }
-
-  addBezierCurve(id, start, end, ctl1, ctl2, options = {}) {
-    const layer = options.layer || 0;
-    this._layers[layer] = this._layers[layer] || [];
-    const bezier = new Bezier(id, start, end, ctl1, ctl2, this._ctx, options);
-    this._layers[layer].push(bezier);
-    return bezier;
-  }
-
-  addCircle(id, p, r, options) {
-    const circle = new Circle(id, p, r, this._ctx, options);
-    const layer = options.layer || 0;
-    this._layers[layer] = this._layers[layer] || [];
-    this._layers[layer].push(circle);
-    return circle;
-  }
-
-  addSquare(id, p, sise, options = {}) {
-    const square = new Square(id, p, sise, this._ctx, options);
-    const layer = options.layer || 0;
-    this._layers[layer] = this._layers[layer] || [];
-    this._layers[layer].push(square);
-    return square;
+    this._layers[layer].push(ele);
+    return ele;
   }
 
   render() {

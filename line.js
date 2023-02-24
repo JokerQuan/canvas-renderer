@@ -1,15 +1,18 @@
 class Line{
 
-  constructor(id, p1, p2, ctx, options = {}) {
+  constructor(id, p1, p2, options = {}) {
     this.id = id;
     this.type = 'line';
     this.p1 = p1;
     this.p2 = p2;
-    this.ctx = ctx;
     this.width = options.width || 1;
     this.color = options.color || 'black';
     this.layer = options.layer || 0;
 
+  }
+  
+  bindCtx(ctx) {
+    this.ctx = ctx;
   }
 
   setAttr(obj) {

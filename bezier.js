@@ -1,13 +1,12 @@
 class Bezier{
 
-  constructor(id, start, end, ctl1, ctl2, ctx, options = {}) {
+  constructor(id, start, end, ctl1, ctl2, options = {}) {
     this.id = id;
     this.type = 'bezier';
     this.start = start;
     this.end = end;
     this.ctl1 = ctl1;
     this.ctl2 = ctl2;
-    this.ctx = ctx;
     this.width = options.width || 1;
     this.color = options.color || 'black';
     this.layer = options.layer || 0;
@@ -19,6 +18,10 @@ class Bezier{
       this[key] = obj[key];
     }
     this.render();
+  }
+  
+  bindCtx(ctx) {
+    this.ctx = ctx;
   }
 
   render() {

@@ -1,16 +1,19 @@
 class Circle{
 
-  constructor(id, basePoint, r, ctx, options = {}) {
+  constructor(id, basePoint, r, options = {}) {
     this.id = id;
     this.type = 'circle';
     this.basePoint = basePoint;
     this.r = r;
-    this.ctx = ctx;
     this.color = options.color || 'white';
     this.borderColor = options.borderColor || 'black';
     this.drag = options.drag === true ? true : false;
     this.layer = options.layer || 0;
 
+  }
+  
+  bindCtx(ctx) {
+    this.ctx = ctx;
   }
 
   setAttr(obj) {
