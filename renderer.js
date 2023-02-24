@@ -7,7 +7,9 @@ class CanvasRenderer {
   _layers = [];
   _ctrlPoints = [];
 
-  constructor(containerSel) {
+  _options = {};
+
+  constructor(containerSel, options = {}) {
     this._container = document.querySelector(containerSel);
     this._container.style.position = 'relative';
     this._canvas = document.createElement("canvas");
@@ -16,6 +18,7 @@ class CanvasRenderer {
     this._canvas.width = this._container.clientWidth;
     this._canvas.height = this._container.clientHeight;
 
+    this._options = options;
     this._init();
     this.render();
   }
@@ -42,10 +45,16 @@ class CanvasRenderer {
 
       // 没有目标元素，则是画布拖拽
       if (!targetEle) {
-        const offsetX = moveEvent.pageX - downPageX;
-        const offsetY = moveEvent.pageY - downPageY;
+        if (this._options.canvasDrag === 'none') return;
+        let offsetX = moveEvent.pageX - downPageX;
+        let offsetY = moveEvent.pageY - downPageY;
         downPageX = moveEvent.pageX;
         downPageY = moveEvent.pageY;
+        if (this._options.canvasDrag === 'horizontal') {
+          offsetY = 0;
+        } else if (this._options.canvasDrag === 'vertical') {
+          offsetX = 0;
+        }
         this._moveAllPoints(offsetX, offsetY);
       } else {
         isClick = false;

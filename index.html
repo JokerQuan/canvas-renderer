@@ -10,16 +10,19 @@
       margin: 0;
       padding: 0;
     }
-    #container {
+    #container1,
+    #container2 {
       margin: 50px;
       width: 600px;
       height: 400px;
       border: 1px solid black;
+      float: left;
     }
   </style>
 </head>
 <body>
-  <div id="container"></div>
+  <div id="container1"></div>
+  <div id="container2"></div>
   <script src="./point.js"></script>
   <script src="./circle.js"></script>
   <script src="./rect.js"></script>
@@ -28,76 +31,169 @@
   <script src="./candle.js"></script>
   <script src="./renderer.js"></script>
   <script>
-    const canvas = new CanvasRenderer("#container");
-
-    const start = canvas.addCtrlPoint(10, 390);
-    const end = canvas.addCtrlPoint(590, 10);
-    const ctl1 = canvas.addCtrlPoint(150, 100);
-    const ctl2 = canvas.addCtrlPoint(450, 300);
-
-    const startCircle = new Circle('start', start, 8, {
-      drag: true,
-      layer: 1
-    });
-    // 注册点击事件
-    startCircle.onClick = () => {
-      startCircle.setAttr({
-        color: startCircle.color === 'white' ? 'black' : 'white'
-      });
-    };
-    canvas.addElement(startCircle);
-
-    canvas.addElement(new Circle('end', end, 8, {
-      drag: true,
-      layer: 1
-    }));
     
-    canvas.addElement(new Circle('ctl1', ctl1, 8, {
-      color: 'red',
-      layer: 1,
-      drag: true
-    }));
+    const example1 = () => {
+      const canvas = new CanvasRenderer("#container1");
 
-    canvas.addElement(new Circle('ctl2', ctl2, 8, {
-      color: 'blue',
-      layer: 1,
-      drag: true
-    }));
+      const start = canvas.addCtrlPoint(10, 390);
+      const end = canvas.addCtrlPoint(590, 10);
+      const ctl1 = canvas.addCtrlPoint(150, 100);
+      const ctl2 = canvas.addCtrlPoint(450, 300);
 
-    // 辅助线
-    canvas.addElement(new Line('line1', start, ctl1));
-    canvas.addElement(new Line('line2', end, ctl2));
+      const startCircle = new Circle('start', start, 8, {
+        drag: true,
+        layer: 1
+      });
+      // 注册点击事件
+      startCircle.onClick = () => {
+        startCircle.setAttr({
+          color: startCircle.color === 'white' ? 'black' : 'white'
+        });
+      };
+      canvas.addElement(startCircle);
 
-    // 起点终点直线
-    canvas.addElement(new Line('line3', start, end, {
-      width: 6,
-      color: 'rgba(200, 200, 200, .6)'
-    }));
+      canvas.addElement(new Circle('end', end, 8, {
+        drag: true,
+        layer: 1
+      }));
+      
+      canvas.addElement(new Circle('ctl1', ctl1, 8, {
+        color: 'red',
+        layer: 1,
+        drag: true
+      }));
 
-    // 贝塞尔曲线
-    canvas.addElement(new Bezier('bezier-demo', start, end, ctl1, ctl2, {
-      width: 6,
-      color: 'black'
-    }));
+      canvas.addElement(new Circle('ctl2', ctl2, 8, {
+        color: 'blue',
+        layer: 1,
+        drag: true
+      }));
 
-    const sp = canvas.addCtrlPoint(0, 0);
-    // 矩形
-    const s = canvas.addElement(new Rect('s', sp, 30, 50, { drag: true }));
-    s.setAttr({style: 'fill'});
+      // 辅助线
+      canvas.addElement(new Line('line1', start, ctl1));
+      canvas.addElement(new Line('line2', end, ctl2));
+
+      // 起点终点直线
+      canvas.addElement(new Line('line3', start, end, {
+        width: 6,
+        color: 'rgba(200, 200, 200, .6)'
+      }));
+
+      // 贝塞尔曲线
+      canvas.addElement(new Bezier('bezier-demo', start, end, ctl1, ctl2, {
+        width: 6,
+        color: 'black'
+      }));
+
+      const sp = canvas.addCtrlPoint(0, 0);
+      // 矩形
+      const s = canvas.addElement(new Rect('s', sp, 30, 50, { drag: true }));
+      s.setAttr({style: 'fill'});
+
+      // 不随画布移动的元素
+      canvas.addElement(new Rect('no-move', {x: 500, y:250}, 30, 50, { 
+        drag: true,
+        layer: 10
+      }));
 
 
-    // 蜡烛图
-    const open = canvas.addCtrlPoint(50, 300);
-    const close = canvas.addCtrlPoint(50, 200);
-    const high = canvas.addCtrlPoint(50, 150);
-    const low = canvas.addCtrlPoint(50, 350);
-    const left_top = canvas.addCtrlPoint(25, 200);
+      // 蜡烛图
+      const open = canvas.addCtrlPoint(50, 300);
+      const close = canvas.addCtrlPoint(50, 200);
+      const high = canvas.addCtrlPoint(50, 150);
+      const low = canvas.addCtrlPoint(50, 350);
+      const left_top = canvas.addCtrlPoint(25, 200);
 
-    canvas.addElement(new Candle('0224', left_top, open, close, high, low, 50, {
-      drag: true
-    }))
+      canvas.addElement(new Candle('0224', left_top, open, close, high, low, 50, {
+        drag: true
+      }))
 
-    canvas.render();
+      canvas.render();
+    }
+
+    const example2 = () => {
+      const canvas = new CanvasRenderer("#container2", {
+        canvasDrag: 'horizontal'
+      });
+
+      const start = canvas.addCtrlPoint(10, 390);
+      const end = canvas.addCtrlPoint(590, 10);
+      const ctl1 = canvas.addCtrlPoint(150, 100);
+      const ctl2 = canvas.addCtrlPoint(450, 300);
+
+      const startCircle = new Circle('start', start, 8, {
+        drag: true,
+        layer: 1
+      });
+      // 注册点击事件
+      startCircle.onClick = () => {
+        startCircle.setAttr({
+          color: startCircle.color === 'white' ? 'black' : 'white'
+        });
+      };
+      canvas.addElement(startCircle);
+
+      canvas.addElement(new Circle('end', end, 8, {
+        drag: true,
+        layer: 1
+      }));
+      
+      canvas.addElement(new Circle('ctl1', ctl1, 8, {
+        color: 'red',
+        layer: 1,
+        drag: true
+      }));
+
+      canvas.addElement(new Circle('ctl2', ctl2, 8, {
+        color: 'blue',
+        layer: 1,
+        drag: true
+      }));
+
+      // 辅助线
+      canvas.addElement(new Line('line1', start, ctl1));
+      canvas.addElement(new Line('line2', end, ctl2));
+
+      // 起点终点直线
+      canvas.addElement(new Line('line3', start, end, {
+        width: 6,
+        color: 'rgba(200, 200, 200, .6)'
+      }));
+
+      // 贝塞尔曲线
+      canvas.addElement(new Bezier('bezier-demo', start, end, ctl1, ctl2, {
+        width: 6,
+        color: 'black'
+      }));
+
+      const sp = canvas.addCtrlPoint(0, 0);
+      // 矩形
+      const s = canvas.addElement(new Rect('s', sp, 30, 50, { drag: true }));
+      s.setAttr({style: 'fill'});
+
+      // 不随画布移动的元素
+      canvas.addElement(new Rect('no-move', {x: 500, y:250}, 30, 50, { 
+        drag: true,
+        layer: 10
+      }));
+
+
+      // 蜡烛图
+      const open = canvas.addCtrlPoint(50, 300);
+      const close = canvas.addCtrlPoint(50, 200);
+      const high = canvas.addCtrlPoint(50, 150);
+      const low = canvas.addCtrlPoint(50, 350);
+      const left_top = canvas.addCtrlPoint(25, 200);
+
+      canvas.addElement(new Candle('0224', left_top, open, close, high, low, 50, {
+        drag: true
+      }))
+
+      canvas.render();
+    }
+
+    example1();
+    example2();
 
   </script>
 </body>
