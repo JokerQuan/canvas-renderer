@@ -115,6 +115,7 @@ class CanvasRenderer {
         targetEle.onClick();
         this.render(); // 点击事件可能修改了相关属性，需要重新render
       }
+      targetEle = null;
       isClick = true;
     });
   }
