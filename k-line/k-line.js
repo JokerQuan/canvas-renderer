@@ -14,8 +14,6 @@ let renderNum = 20;
 // 渲染数据的下标，左闭右闭，用于多渲染一条数据
 let start = data.length - renderNum;
 let end = data.length;
-// let start = 10;
-// let end = start + renderNum;
 
 const renderer = new CanvasRenderer('#k-line', {
   canvasDrag: 'horizontal'
@@ -45,6 +43,8 @@ let virtualTotalWidth = perCandleWidth * data.length;
 // 当前渲染数据的offset
 let virtualLeft = -perCandleWidth * start;
 
+
+// 计算各种基准数值
 const calcBaseNums = () => {
   renderData = data.slice(start, end + 1);
 
@@ -84,7 +84,7 @@ const valueToPx = (item) => {
   const highY = yToPx(high);
   const lowY = yToPx(low);
 
-  return {renderIndex, baseY, openY, closeY, highY, lowY};
+  return { index, renderIndex, baseY, openY, closeY, highY, lowY };
 }
 
 // 这里的x是点在canvas上的px位置
@@ -96,28 +96,25 @@ const pxToValue = (x, y) => {
   }
 }
 
-const addCandles = () => {
-  for (let i = start; i <= end; i++) {
-    if (i < 0 || i >= data.length) return;
-    const { baseY, openY, closeY, highY, lowY } = valueToPx(data[i]);
-    const middle = (i + 0.5) * perCandleWidth + virtualLeft;
-    const baseX = middle - perCandleWidth / 2 + gap / 2;
-    const base = renderer.addCtrlPoint(baseX, baseY);
-    const open = renderer.addCtrlPoint(middle, openY);
-    const close = renderer.addCtrlPoint(middle, closeY);
-    const high = renderer.addCtrlPoint(middle, highY);
-    const low = renderer.addCtrlPoint(middle, lowY);
-  
-    const candle = new Candle(`candle-${data[i].date}`, base, open, close, high, low, perCandleWidth - gap);
-    renderer.addElement(candle);
-  }
+const addCandle = (item) => {
+  const { index, baseY, openY, closeY, highY, lowY } = valueToPx(item);
+  const middle = (index + 0.5) * perCandleWidth + virtualLeft;
+  const baseX = middle - perCandleWidth / 2 + gap / 2;
+  const base = renderer.addCtrlPoint(baseX, baseY);
+  const open = renderer.addCtrlPoint(middle, openY);
+  const close = renderer.addCtrlPoint(middle, closeY);
+  const high = renderer.addCtrlPoint(middle, highY);
+  const low = renderer.addCtrlPoint(middle, lowY);
+
+  const candle = new Candle(`candle-${item.date}`, base, open, close, high, low, perCandleWidth - gap);
+  renderer.addElement(candle);
 }
 
-const onRenderDataChange = () => {
-  renderer.reset();
-  calcBaseNums();
-  addCandles();
-  renderer.render();
+const addElements = () => {
+  for (let i = start; i <= end; i++) {
+    if (i < 0 || i >= data.length) return;
+    addCandle(data[i]);
+  }
 }
 
 // 返回 true 停止拖拽
@@ -135,15 +132,23 @@ renderer.onCanvasDrag = (offsetX) => {
     if (startIndex !== start || endIndex !== end) {
       start = startIndex;
       end = endIndex;
-      onRenderDataChange();
+      update();
     }
   }
   
 }
 
+const update = () => {
+  renderer.reset();
+  render();
+}
 
-// 计算各种基准数值
-calcBaseNums();
-addCandles();
-renderer.render();
+const render = () => {
+  calcBaseNums();
+  addElements();
+  renderer.render();
+}
+
+render();
+
 
