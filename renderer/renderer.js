@@ -55,8 +55,8 @@ class CanvasRenderer {
     let targetEle = null;
     const moveFn = (moveEvent) => {
 
-      // 没有目标元素，则是画布拖拽
-      if (!targetEle) {
+      // 没有目标元素，或者目标元素不支持拖拽，则是画布拖拽
+      if (!targetEle || !targetEle.drag) {
         if (this._options.canvasDrag === 'none') return;
         let offsetX = moveEvent.pageX - downPageX;
         let offsetY = moveEvent.pageY - downPageY;
@@ -67,7 +67,13 @@ class CanvasRenderer {
         } else if (this._options.canvasDrag === 'vertical') {
           offsetX = 0;
         }
-        this._moveAllPoints(offsetX, offsetY);
+        let stopDrag = false;
+        if (typeof this.onCanvasDrag === 'function') {
+          stopDrag = this.onCanvasDrag(offsetX, offsetY);
+        }
+        if (!stopDrag) {
+          this._moveAllPoints(offsetX, offsetY);
+        }
       } else {
         isClick = false;
         let canvasX = moveEvent.pageX - this._container.offsetLeft - downPointOffsetX;
@@ -92,14 +98,11 @@ class CanvasRenderer {
       if (targetEle) {
         downPointOffsetX = e.offsetX - targetEle.basePoint.x;
         downPointOffsetY = e.offsetY - targetEle.basePoint.y;
-        if (targetEle.drag) {
-          document.addEventListener('mousemove', moveFn);
-        }
-      } else {
-        downPageX = e.pageX;
-        downPageY = e.pageY;
-        document.addEventListener('mousemove', moveFn);
       }
+
+      downPageX = e.pageX;
+      downPageY = e.pageY;
+      document.addEventListener('mousemove', moveFn);
 
     });
 
@@ -166,6 +169,19 @@ class CanvasRenderer {
     this._layers[layer] = this._layers[layer] || [];
     this._layers[layer].push(ele);
     return ele;
+  }
+
+  getCanvasSize() {
+    return {
+      canvaWidth: this._canvas.width,
+      canvaHeight: this._canvas.height
+    }
+  }
+
+  reset() {
+    this._layers = [];
+    this._ctrlPoints = [];
+    this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
   }
 
   render() {

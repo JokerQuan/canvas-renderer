@@ -1,5 +1,7 @@
 class Candle{
-
+  /**
+   * 使用太复杂，可以优化
+   */
   constructor(id, basePoint, open, close, high, low, width, options = {}) {
     this.id = id;
     this.type = 'candle';
@@ -11,7 +13,7 @@ class Candle{
     this.width = width;
     this.drag = options.drag === true ? true : false;
     this.lineWidth = options.lineWidth || 1;
-    this.color = options.color || open.y < close.y ? 'red' : 'green';
+    this.color = options.color || open.y < close.y ? 'rgb(10,171,98)' : 'rgb(255,51,51)';
     this.layer = options.layer || 0;
 
 
@@ -29,7 +31,7 @@ class Candle{
       Math.abs(close.y - open.y), 
       {
         color: this.color,
-        style: open.y < close.y ? 'stroke' : 'fill',
+        style: open.y < close.y ? 'fill' : 'stroke',
         layer: this.layer,
       }
     );
