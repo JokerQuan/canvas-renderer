@@ -1,26 +1,14 @@
-class CanvasRenderer {
+class Stage {
   _container;
   _ctx = null;
   _canvas = null;
 
   // 按图层保存元素
   _layers = [];
-  _ctrlPoints = [];
+  _elements = [];
 
   _options = {};
 
-  /**
-   * 对外接口：
-   *  1、addCtrlPoint， 添加控制点，控制点不渲染，主要用于多个元素之间的联动
-   *  2、addElement, 添加元素，支持自定义元素
-   *  3、render，渲染全部元素
-   * todo：
-   *  4、update，优化方法，检测元素是否在可视区域内，如果不在则不渲染
-   *  5、onCanvasDrag，画布拖动回调
-   *  6、removeCtrl，移除控制点，需要考虑与控制点关联的元素，可能需要重新设计数据结构
-   *  7、removeElement, 移除元素，同样需要考虑与控制点的关联关系
-   *  8、图层相关的操作
-   */
   constructor(containerSel, options = {}) {
     this._container = document.querySelector(containerSel);
     this._container.style.position = 'relative';
@@ -67,12 +55,9 @@ class CanvasRenderer {
         } else if (this._options.canvasDrag === 'vertical') {
           offsetX = 0;
         }
-        let stopDrag = false;
+        
         if (typeof this.onCanvasDrag === 'function') {
-          stopDrag = this.onCanvasDrag(offsetX, offsetY);
-        }
-        if (!stopDrag) {
-          this._moveAllPoints(offsetX, offsetY);
+          this.onCanvasDrag(offsetX, offsetY);
         }
       } else {
         isClick = false;
@@ -85,7 +70,13 @@ class CanvasRenderer {
         if (canvasY < 0) canvasY = 0;
         if (canvasY > this._canvas.height) canvasY = this._canvas.height;
   
-        targetEle.moveTo(canvasX, canvasY);
+        // todo: 元素的拖拽效果应该在这里实现还是抛出去让每个元素自己实现？
+        //       或者在元素类中实现，并可以由实例重写覆盖？
+        // targetEle.setAttrs({
+        //   x: canvasX,
+        //   y: canvasY
+        // });
+        targetEle.onDrag(canvasX, canvasY)
       }
 
       // 更新
@@ -96,8 +87,8 @@ class CanvasRenderer {
       targetEle = this._pointInWitchElement(e.offsetX, e.offsetY);
 
       if (targetEle) {
-        downPointOffsetX = e.offsetX - targetEle.basePoint.x;
-        downPointOffsetY = e.offsetY - targetEle.basePoint.y;
+        downPointOffsetX = e.offsetX - targetEle.x;
+        downPointOffsetY = e.offsetY - targetEle.y;
       }
 
       downPageX = e.pageX;
@@ -106,14 +97,17 @@ class CanvasRenderer {
 
     });
 
-    document.addEventListener('mouseup', (e) => {
+    document.addEventListener('mouseup', (upEvent) => {
       document.removeEventListener('mousemove', moveFn);
       
       if (!targetEle) return;
       if (isClick && typeof targetEle.onClick === 'function') {
-        // todo 模拟事件冒泡
-        targetEle.onClick();
-        this.render(); // 点击事件可能修改了相关属性，需要重新render
+        // 鼠标按下和鼠标抬起时都在目标元素内才触发点击
+        if (targetEle.containPoint(upEvent.offsetX, upEvent.offsetY)) {
+          // todo 模拟事件冒泡
+          targetEle.onClick();
+          this.render(); // 点击事件可能修改了相关属性，需要重新render
+        }
       }
       targetEle = null;
       isClick = true;
@@ -121,55 +115,37 @@ class CanvasRenderer {
   }
 
   // 查找点在哪个元素内，都不在则返回 null
+  // _pointInWitchElement(x, y) {
+  //   // 图层越高优先级越高
+  //   let target = null;
+  //   const len = this._layers.length;
+  //   for (let i = len - 1; i >= 0; i--) {
+  //     if (!this._layers[i]) continue;
+  //     // 同一图层，元素越靠后（即后加入），优先级越高
+  //     const reversedEle = this._layers[i].toReversed();
+  //     target = reversedEle.find(ele => {
+  //       if (typeof ele.containPoint !== 'function') return false;
+  //       return ele.containPoint(x, y);
+  //     });
+  //     if (target) break;
+  //   }
+  //   return target;
+  // }
+
   _pointInWitchElement(x, y) {
-    // 图层越高优先级越高
-    let target = null;
-    const len = this._layers.length;
-    for (let i = len - 1; i >= 0; i--) {
-      if (!this._layers[i]) continue;
-      // 同一图层，元素越靠后（即后加入），优先级越高
-      const reversedEle = this._layers[i].toReversed();
-      target = reversedEle.find(ele => {
-        if (typeof ele.containPoint !== 'function') return false;
-        return ele.containPoint(x, y);
-      });
-      if (target) break;
-    }
+    let target = this._elements.toReversed().find(ele => {
+      if (typeof ele.containPoint !== 'function') return false;
+      return ele.containPoint(x, y);
+    });
     return target;
   }
 
-  _moveAllPoints(offsetX, offsetY) {
-    this._ctrlPoints.forEach(p => {
-      if (!p.fixed) {
-        p.x += offsetX;
-        p.y += offsetY;
-      }
-    });
-    this.render();
-  }
-
-  // 基于控制点创建的元素，可以随画布拖拽移动
-  addCtrlPoint(x, y, fixed = false) {
-    const point = new Point(x, y, fixed);
-    this._ctrlPoints.push(point);
-    return point;
-  }
-
-  /**
-   * 
-   * @param {*} ele 自定义 canvas 元素
-   * 自定义元素规则：
-   *  1、必须实现 bindCtx、render 函数
-   *  2、如果需要点击功能，必须实现 containPoint 函数
-   *  3、如果需要拖拽功能，必须实现 containPoint 函数、moveTo 函数、basePoint 属性
-   * @returns 
-   */
-  addElement(ele) {
-    ele.bindCtx(this._ctx);
-    const layer = ele.layer;
-    this._layers[layer] = this._layers[layer] || [];
-    this._layers[layer].push(ele);
-    return ele;
+  appendElement(ele) {
+    this._elements.push(ele);
+    // const layer = ele.layer;
+    // this._layers[layer] = this._layers[layer] || [];
+    // this._layers[layer].push(ele);
+    // return ele;
   }
 
   getCanvasSize() {
@@ -181,15 +157,15 @@ class CanvasRenderer {
 
   reset() {
     this._layers = [];
-    this._ctrlPoints = [];
     this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
   }
 
   render() {
     this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    // this._layers.forEach(layer => {
+    //   layer.forEach(ele => ele.render(this._ctx));
+    // });
 
-    this._layers.forEach(layer => {
-      layer.forEach(ele => ele.render());
-    });
+    this._elements.forEach(ele => ele.render(this._ctx));
   }
 }

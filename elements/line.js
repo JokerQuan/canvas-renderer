@@ -1,34 +1,23 @@
-class Line{
+class Line extends Shape{
 
-  constructor(id, p1, p2, options = {}) {
-    this.id = id;
+  constructor(options) {
+    super(options);
     this.type = 'line';
-    this.p1 = p1;
-    this.p2 = p2;
-    this.width = options.width || 1;
-    this.color = options.color || 'black';
-    this.layer = options.layer || 0;
-
-  }
-  
-  bindCtx(ctx) {
-    this.ctx = ctx;
   }
 
   setAttr(obj) {
     for (let key in obj){
       this[key] = obj[key];
     }
-    this.render();
   }
 
-  render() {
-    this.ctx.lineWidth = this.width;
-    this.ctx.strokeStyle = this.color;
-    this.ctx.beginPath();
-    this.ctx.moveTo(this.p1.x, this.p1.y);
-    this.ctx.lineTo(this.p2.x, this.p2.y);
-    this.ctx.stroke();
-    this.ctx.closePath();
+  render(ctx) {
+    ctx.lineWidth = this.lineWidth;
+    ctx.strokeStyle = this.color;
+    ctx.beginPath();
+    ctx.moveTo(this.x1, this.y1);
+    ctx.lineTo(this.x2, this.y2);
+    ctx.stroke();
+    ctx.closePath();
   }
 }

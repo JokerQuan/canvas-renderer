@@ -16,26 +16,15 @@
       height: 400px;
       border: 1px solid black;
     }
-    #container2 {
-      margin: 20px;
-      width: 800px;
-      height: 500px;
-      border: 1px solid black;
-    }
-    #k-line {
-      margin: 20px;
-      width: 900px;
-      height: 500px;
-      border: 1px solid black;
-    }
   </style>
 </head>
 <body>
   <div id="container1"></div>
   <div id="container2"></div>
   <div id="k-line"></div>
-  <script src="./renderer/renderer.js"></script>
-  <script src="./elements/point.js"></script>
+  <script src="./renderer/stage.js"></script>
+  <script src="./renderer/node.js"></script>
+  <script src="./renderer/shape.js"></script>
   <script src="./elements/circle.js"></script>
   <script src="./elements/rect.js"></script>
   <script src="./elements/line.js"></script>
@@ -43,13 +32,8 @@
   <script src="./components/candle.js"></script>
 
   <script src="./example1.js"></script>
-  <script src="./example2.js"></script>
   <script>
     example1();
-    example2();
   </script>
-
-  <script src="./k-line/data.js"></script>
-  <script src="./k-line/k-line.js"></script>
 </body>
 </html>

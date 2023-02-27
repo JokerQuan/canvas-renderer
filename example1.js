@@ -1,79 +1,73 @@
 const example1 = () => {
-  const renderer = new CanvasRenderer("#container1");
-
-  const start = renderer.addCtrlPoint(10, 390);
-  const end = renderer.addCtrlPoint(590, 10);
-  const ctl1 = renderer.addCtrlPoint(150, 100);
-  const ctl2 = renderer.addCtrlPoint(450, 300);
-
-  const startCircle = new Circle('start', start, 8, {
-    drag: true,
-    layer: 1
-  });
-  // 注册点击事件
-  startCircle.onClick = () => {
-    startCircle.setAttr({
-      color: startCircle.color === 'white' ? 'black' : 'white'
-    });
-  };
-  renderer.addElement(startCircle);
-
-  renderer.addElement(new Circle('end', end, 8, {
-    drag: true,
-    layer: 1
-  }));
-  
-  renderer.addElement(new Circle('ctl1', ctl1, 8, {
-    color: 'red',
-    layer: 1,
-    drag: true
-  }));
-
-  renderer.addElement(new Circle('ctl2', ctl2, 8, {
-    color: 'blue',
-    layer: 1,
-    drag: true
-  }));
+  const stage = new Stage("#container1");
 
   // 辅助线
-  renderer.addElement(new Line('line1', start, ctl1));
-  renderer.addElement(new Line('line2', end, ctl2));
+  const line1 = new Line({x1: 10, y1: 390, x2: 150, y2: 100, lineWidth: 1, color: 'black'});
+  const line2 = new Line({x1: 590, y1: 10, x2: 450, y2: 300, lineWidth: 1, color: 'black'});
+  stage.appendElement(line1);
+  stage.appendElement(line2);
 
   // 起点终点直线
-  renderer.addElement(new Line('line3', start, end, {
-    width: 6,
-    color: 'rgba(200, 200, 200, .6)'
-  }));
+  const line3 = new Line({x1: 10, y1: 390, x2: 590, y2: 10, lineWidth: 6, color: 'rgba(200, 200, 200, .6)'});
+  stage.appendElement(line3);
 
   // 贝塞尔曲线
-  renderer.addElement(new Bezier('bezier-demo', start, end, ctl1, ctl2, {
-    width: 6,
+  const bezier = new Bezier({
+    x: 10, y: 390, 
+    ex: 590, ey: 10, 
+    c1x: 150, c1y: 100,
+    c2x: 450, c2y: 300,
+    lineWidth: 6, 
     color: 'black'
-  }));
+  });
+  stage.appendElement(bezier);
 
-  const sp = renderer.addCtrlPoint(0, 0);
+  const startCircle = new Circle({x: 10, y: 390, radius: 8, color: 'white', drag: true});
+  const endCircle = new Circle({x: 590, y: 10, radius: 8, color: 'white', drag: true});
+  const ctl1Circle = new Circle({x: 150, y: 100, radius: 8, color: 'red', drag: true});
+  const ctl2Circle = new Circle({x: 450, y: 300, radius: 8, color: 'blue', drag: true});
+  stage.appendElement(startCircle);
+  stage.appendElement(endCircle);
+  stage.appendElement(ctl1Circle);
+  stage.appendElement(ctl2Circle);
+
+  startCircle.onDrag = (x, y) => {
+    startCircle.setAttrs({x, y});
+    line1.setAttrs({x1: x, y1: y});
+    line3.setAttrs({x1: x, y1: y});
+    bezier.setAttrs({x, y});
+  }
+
+  const get0_255 = () => {
+    return Math.floor(Math.random() * 256);
+  }
+
+  ctl1Circle.onClick = () => {
+    ctl1Circle.setAttrs({
+      color: `rgb(${get0_255()}, ${get0_255()}, ${get0_255()})`
+    })
+  }
+
   // 矩形
-  const s = renderer.addElement(new Rect('s', sp, 30, 50, { drag: true }));
-  s.setAttr({style: 'fill'});
-
-  // 不随画布移动的元素
-  const nomove = renderer.addCtrlPoint(500, 250, true);
-  renderer.addElement(new Rect('no-move', nomove, 30, 50, { 
-    drag: true,
-    layer: 10
-  }));
-
+  const rect = new Rect({x: 10, y: 10, width: 50, height: 60, drag: true, color: 'skyblue'});
+  rect.onClick = () => {
+    rect.setAttrs({color: rect.color === 'skyblue' ? '#7367F0' : 'skyblue'})
+  }
+  rect.onDrag = (x, y) => {
+    rect.setAttrs({x, y});
+  }
+  stage.appendElement(rect);
 
   // 蜡烛图
-  const open = renderer.addCtrlPoint(50, 300);
-  const close = renderer.addCtrlPoint(50, 200);
-  const high = renderer.addCtrlPoint(50, 150);
-  const low = renderer.addCtrlPoint(50, 350);
-  const left_top = renderer.addCtrlPoint(25, 200);
+  // const open = stage.addCtrlPoint(50, 300);
+  // const close = stage.addCtrlPoint(50, 200);
+  // const high = stage.addCtrlPoint(50, 150);
+  // const low = stage.addCtrlPoint(50, 350);
+  // const left_top = stage.addCtrlPoint(25, 200);
 
-  renderer.addElement(new Candle('0224', left_top, open, close, high, low, 50, {
-    drag: true
-  }))
+  // stage.appendElement(new Candle('0224', left_top, open, close, high, low, 50, {
+  //   drag: true
+  // }))
 
-  renderer.render();
+  stage.render();
 }

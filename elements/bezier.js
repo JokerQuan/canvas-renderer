@@ -1,41 +1,22 @@
-class Bezier{
+class Bezier extends Shape{
 
-  constructor(id, start, end, ctl1, ctl2, options = {}) {
-    this.id = id;
+  constructor(options) {
+    super(options);
     this.type = 'bezier';
-    this.start = start;
-    this.end = end;
-    this.ctl1 = ctl1;
-    this.ctl2 = ctl2;
-    this.width = options.width || 1;
-    this.color = options.color || 'black';
-    this.layer = options.layer || 0;
-
   }
 
-  setAttr(obj) {
-    for (let key in obj){
-      this[key] = obj[key];
-    }
-    this.render();
-  }
-  
-  bindCtx(ctx) {
-    this.ctx = ctx;
-  }
-
-  render() {
-    const { start, end, ctl1, ctl2, width, color } = this;
-    this.ctx.lineWidth = width;
-    this.ctx.strokeStyle = color;
-    this.ctx.beginPath();
-    this.ctx.moveTo(start.x, start.y);
-    this.ctx.bezierCurveTo(
-      ctl1.x, ctl1.y, 
-      ctl2.x, ctl2.y, 
-      end.x, end.y
+  render(ctx) {
+    const { x, y, ex, ey, c1x, c1y, c2x, c2y, lineWidth, color } = this;
+    ctx.lineWidth = lineWidth;
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.bezierCurveTo(
+      c1x, c1y, 
+      c2x, c2y, 
+      ex, ey
     );
-    this.ctx.stroke();
-    this.ctx.closePath();
+    ctx.stroke();
+    ctx.closePath();
   }
 }
