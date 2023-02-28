@@ -10,8 +10,8 @@ class Rect extends Shape{
     return px >= x && px <= x + width && py >= y && py <= y + height;
   }
 
-  render(ctx) {
-    let { x, y, width, height, background, style, lineWidth = 1, backgroundImage } = this;
+  render() {
+    let { ctx, x, y, width, height, background, style, lineWidth = 1, backgroundImage } = this;
     if (typeof background !== 'string') {
       const colors = background.direction === 'left' ? background.colors.toReversed() : background.colors;
       background = ctx.createLinearGradient(x, y, x + width, y);

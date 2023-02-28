@@ -42,9 +42,13 @@ const example1 = () => {
     return Math.floor(Math.random() * 256);
   }
 
+  const getRandomColor = () => {
+    return `rgb(${get0_255()}, ${get0_255()}, ${get0_255()})`
+  }
+
   ctl1Circle.onClick = () => {
     ctl1Circle.setAttrs({
-      color: `rgb(${get0_255()}, ${get0_255()}, ${get0_255()})`
+      color: getRandomColor()
     })
   }
 
@@ -105,6 +109,27 @@ const example1 = () => {
       reader.readAsDataURL(imgFile);
     } catch(e){
       console.log(e);
+    }
+  }
+
+
+  // 动画测试
+  const animCircle = new Circle({x: 100, y: 600, radius: 30, drag: true, background: 'white', borderColor: 'black'});
+  stage.appendElement(animCircle);
+  animCircle.onClick = () => {
+    const anim1 = new Anim(animCircle, {
+      x: 600,
+      y: 700,
+      radius: 60
+    }, 3000, Tween.ease);
+    anim1.start();
+    anim1.onAnim = (values) => {
+      animCircle.setAttrs(values);
+      stage.render();
+    };
+    anim1.onFinish = () => {
+      animCircle.setAttrs({background: 'skyblue'});
+      stage.render();
     }
   }
 

@@ -5,13 +5,8 @@ class Line extends Shape{
     this.type = 'line';
   }
 
-  setAttr(obj) {
-    for (let key in obj){
-      this[key] = obj[key];
-    }
-  }
-
-  render(ctx) {
+  render() {
+    const { ctx } = this;
     ctx.lineWidth = this.lineWidth;
     ctx.strokeStyle = this.color;
     ctx.beginPath();

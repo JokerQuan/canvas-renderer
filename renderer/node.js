@@ -9,6 +9,10 @@ class Node {
     }
   }
 
+  bindCtx(ctx) {
+    this.ctx = ctx;
+  }
+
   appendChild(child) {
     if (child.parent) {
       this.children.parent.removeChild(child);

@@ -139,6 +139,7 @@ class Stage {
   }
 
   appendElement(ele) {
+    ele.bindCtx(this._ctx);
     this._elements.push(ele);
     // const layer = ele.layer;
     // this._layers[layer] = this._layers[layer] || [];
@@ -164,6 +165,6 @@ class Stage {
     //   layer.forEach(ele => ele.render(this._ctx));
     // });
 
-    this._elements.forEach(ele => ele.render(this._ctx));
+    this._elements.forEach(ele => ele.render());
   }
 }

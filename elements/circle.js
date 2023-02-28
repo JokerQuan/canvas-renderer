@@ -11,8 +11,8 @@ class Circle extends Shape{
     return Math.sqrt((px - x) * (px - x) + (py - y) * (py - y)) <= radius;
   }
 
-  render(ctx) {
-    let { x, y, radius, background, borderColor, backgroundImage } = this;
+  render() {
+    let { ctx, x, y, radius, background, borderColor, backgroundImage } = this;
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
     if (background && typeof background !== 'string') {

@@ -5,8 +5,8 @@ class Bezier extends Shape{
     this.type = 'bezier';
   }
 
-  render(ctx) {
-    const { x, y, ex, ey, c1x, c1y, c2x, c2y, lineWidth, color } = this;
+  render() {
+    const { ctx, x, y, ex, ey, c1x, c1y, c2x, c2y, lineWidth, color } = this;
     ctx.lineWidth = lineWidth;
     ctx.strokeStyle = color;
     ctx.beginPath();
