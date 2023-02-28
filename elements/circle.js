@@ -12,14 +12,24 @@ class Circle extends Shape{
   }
 
   render(ctx) {
-    const { x, y, radius, color, borderColor } = this;
+    let { x, y, radius, background, borderColor } = this;
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
-    ctx.fillStyle = color;
+    if (typeof background !== 'string') {
+      const colors = background.colors;
+      background = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      const step = 1 / (colors.length - 1);
+      for(let i = 0; i < colors.length; i++) {
+        background.addColorStop(step * i, colors[i]);
+      }
+    }
+    ctx.fillStyle = background;
     ctx.fill()
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = borderColor;
-    ctx.stroke();
-    ctx.closePath();
+    if (borderColor) {
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = borderColor;
+      ctx.stroke();
+      ctx.closePath();
+    }
   }
 }

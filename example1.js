@@ -22,10 +22,10 @@ const example1 = () => {
   });
   stage.appendElement(bezier);
 
-  const startCircle = new Circle({x: 10, y: 390, radius: 8, color: 'white', drag: true});
-  const endCircle = new Circle({x: 590, y: 10, radius: 8, color: 'white', drag: true});
-  const ctl1Circle = new Circle({x: 150, y: 100, radius: 8, color: 'red', drag: true});
-  const ctl2Circle = new Circle({x: 450, y: 300, radius: 8, color: 'blue', drag: true});
+  const startCircle = new Circle({x: 10, y: 390, radius: 8, background: 'white', borderColor: 'black', drag: true});
+  const endCircle = new Circle({x: 590, y: 10, radius: 8, background: 'white', borderColor: 'black', drag: true});
+  const ctl1Circle = new Circle({x: 150, y: 100, radius: 8, background: 'red', borderColor: 'black', drag: true});
+  const ctl2Circle = new Circle({x: 450, y: 300, radius: 8, background: 'blue', borderColor: 'black', drag: true});
   stage.appendElement(startCircle);
   stage.appendElement(endCircle);
   stage.appendElement(ctl1Circle);
@@ -58,13 +58,21 @@ const example1 = () => {
   }
   stage.appendElement(rect);
 
-  // 渐变测试
+  // 线性渐变测试
   const linear = {
     direction: 'left',
     colors: ['red', 'orange', 'blue', 'green']
   };
   const rect1 = new Rect({x: 500, y: 400, width: 150, height: 150, drag: true, background: linear});
   stage.appendElement(rect1);
+
+  // 径向渐变测试
+
+  const radial = {
+    colors: ['#2CD8D5', '#6B8DD6', '#8E37D7']
+  }
+  const circleR = new Circle({x: 600, y: 200, radius: 80, background: radial, drag: true});
+  stage.appendElement(circleR);
 
   // 蜡烛图
   // const open = stage.addCtrlPoint(50, 300);
