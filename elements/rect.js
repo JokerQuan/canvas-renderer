@@ -11,13 +11,21 @@ class Rect extends Shape{
   }
 
   render(ctx) {
-    const { x, y, width, height, color, style } = this;
+    let { x, y, width, height, background, style, lineWidth = 1 } = this;
+    if (typeof background !== 'string') {
+      const colors = background.direction === 'left' ? background.colors.toReversed() : background.colors;
+      background = ctx.createLinearGradient(x, y, x + width, y);
+      const step = 1 / (colors.length - 1);
+      for(let i = 0; i < colors.length; i++) {
+        background.addColorStop(step * i, colors[i]);
+      }
+    }
     if (style === 'stroke') {
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = color
+      ctx.lineWidth = lineWidth;
+      ctx.strokeStyle = background
       ctx.strokeRect(x, y, width, height);
     } else {
-      ctx.fillStyle = color;
+      ctx.fillStyle = background;
       ctx.fillRect(x, y, width, height);
     }
   }

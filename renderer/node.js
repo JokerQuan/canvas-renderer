@@ -45,7 +45,9 @@ class Node {
 
   onMouseWheel() {}
 
-  onDrag() {}
+  onDrag(x, y) {
+    this.setAttrs({x, y});
+  }
 
   onDragEnd() {}
 

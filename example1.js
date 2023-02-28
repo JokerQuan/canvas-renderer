@@ -49,14 +49,22 @@ const example1 = () => {
   }
 
   // 矩形
-  const rect = new Rect({x: 10, y: 10, width: 50, height: 60, drag: true, color: 'skyblue'});
+  const rect = new Rect({x: 10, y: 10, width: 50, height: 60, drag: true, background: 'skyblue'});
   rect.onClick = () => {
-    rect.setAttrs({color: rect.color === 'skyblue' ? '#7367F0' : 'skyblue'})
+    rect.setAttrs({background: rect.background === 'skyblue' ? '#7367F0' : 'skyblue'})
   }
   rect.onDrag = (x, y) => {
     rect.setAttrs({x, y});
   }
   stage.appendElement(rect);
+
+  // 渐变测试
+  const linear = {
+    direction: 'left',
+    colors: ['red', 'orange', 'blue', 'green']
+  };
+  const rect1 = new Rect({x: 500, y: 400, width: 150, height: 150, drag: true, background: linear});
+  stage.appendElement(rect1);
 
   // 蜡烛图
   // const open = stage.addCtrlPoint(50, 300);

@@ -28,9 +28,7 @@ class Stage {
   }
 
   _bindEvent() {
-    // 鼠标按下时，相对元素基准点的偏移量
-    // 比如圆形的基准点就是圆心，矩形的基准点可以是左上角
-    // 规定：实现自定义元素需要拖拽时，必须指定一个绘制相关的基准点 basePoint
+    // 鼠标按下时，相对元素基准点x, y的偏移量
     let downPointOffsetX = 0;
     let downPointOffsetY = 0;
 
