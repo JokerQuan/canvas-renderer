@@ -12,10 +12,10 @@ class Circle extends Shape{
   }
 
   render(ctx) {
-    let { x, y, radius, background, borderColor } = this;
+    let { x, y, radius, background, borderColor, backgroundImage } = this;
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
-    if (typeof background !== 'string') {
+    if (background && typeof background !== 'string') {
       const colors = background.colors;
       background = ctx.createRadialGradient(x, y, 0, x, y, radius);
       const step = 1 / (colors.length - 1);
@@ -25,6 +25,12 @@ class Circle extends Shape{
     }
     ctx.fillStyle = background;
     ctx.fill()
+    if (backgroundImage) {
+      ctx.save();
+      ctx.clip();
+      ctx.drawImage(backgroundImage, x - radius, y - radius, radius * 2, radius * 2);
+      ctx.restore();
+    }
     if (borderColor) {
       ctx.lineWidth = 1;
       ctx.strokeStyle = borderColor;

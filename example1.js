@@ -69,10 +69,44 @@ const example1 = () => {
   // 径向渐变测试
 
   const radial = {
-    colors: ['#2CD8D5', '#6B8DD6', '#8E37D7']
+    colors: ['#2CD8D599', '#6B8DD699', '#8E37D766']
   }
   const circleR = new Circle({x: 600, y: 200, radius: 80, background: radial, drag: true});
   stage.appendElement(circleR);
+
+  // 图片背景测试
+  const imgRect = new Rect({x: 700, y: 400, width: 150, height: 150, drag: true, background: linear, style:'stroke'});
+  stage.appendElement(imgRect);
+  imgRect.onClick = () => {
+    readFileToSetBackground(imgRect)
+  }
+
+  const imgCircle = new Circle({x: 800, y: 200, radius: 80, drag: true, borderColor: 'black'});
+  stage.appendElement(imgCircle);
+  imgCircle.onClick = () => {
+    readFileToSetBackground(imgCircle)
+  }
+
+  // todo 还可以实现网络图片作为背景的方法
+  // 读取本地文件作为背景图
+  const readFileToSetBackground = async (ele) => {
+    try {
+      const [imgFileHandler] = await window.showOpenFilePicker();
+      const imgFile = await imgFileHandler.getFile();
+      const img = new Image();
+      const reader = new FileReader();
+      reader.onload = e => img.src = e.target.result;
+      img.onload = () => {
+        ele.setAttrs({
+          backgroundImage: img
+        })
+        stage.render();
+      }
+      reader.readAsDataURL(imgFile);
+    } catch(e){
+      console.log(e);
+    }
+  }
 
   // 蜡烛图
   // const open = stage.addCtrlPoint(50, 300);
