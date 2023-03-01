@@ -25,6 +25,7 @@ class Stage {
 
   _init() {
     this._bindEvent();
+    this._bindHover();
   }
 
   _bindEvent() {
@@ -68,12 +69,6 @@ class Stage {
         if (canvasY < 0) canvasY = 0;
         if (canvasY > this._canvas.height) canvasY = this._canvas.height;
   
-        // todo: 元素的拖拽效果应该在这里实现还是抛出去让每个元素自己实现？
-        //       或者在元素类中实现，并可以由实例重写覆盖？
-        // targetEle.setAttrs({
-        //   x: canvasX,
-        //   y: canvasY
-        // });
         targetEle.onDrag(canvasX, canvasY)
       }
 
@@ -109,6 +104,33 @@ class Stage {
       }
       targetEle = null;
       isClick = true;
+    });
+  }
+
+  _bindHover() {
+    let targetEle = null;
+    let hoveredEle = null;
+    let isHover = false;
+    this._canvas.addEventListener('mousemove', (e) => {
+      targetEle = this._pointInWitchElement(e.offsetX, e.offsetY);
+      if (targetEle && !isHover) {
+        hoveredEle = targetEle;
+        isHover = true;
+        hoveredEle.onHover();
+      }
+      if (hoveredEle && isHover) {
+        // 重叠元素切换 hover 目标
+        if (targetEle && hoveredEle !== targetEle) {
+          hoveredEle.onHoverOut();
+          hoveredEle = targetEle;
+          hoveredEle.onHover();
+        }
+        if (!hoveredEle.containPoint(e.offsetX, e.offsetY)) {
+          hoveredEle.onHoverOut();
+          isHover = false;
+          hoveredEle = null;
+        }
+      }
     });
   }
 

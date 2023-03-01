@@ -122,7 +122,6 @@ const example1 = () => {
       y: 700,
       radius: 60
     }, 3000, Tween.ease);
-    anim1.start();
     anim1.onAnim = (values) => {
       animCircle.setAttrs(values);
       stage.render();
@@ -131,6 +130,43 @@ const example1 = () => {
       animCircle.setAttrs({background: 'skyblue'});
       stage.render();
     }
+    anim1.start();
+  }
+
+
+  // hover 测试
+  const hoverParent = new Circle({x: 800, y: 620, radius: 50, drag: true, background: 'white', borderColor: 'black'});
+  stage.appendElement(hoverParent);
+  hoverParent.onHover = () => {
+    hoverParent.setAttrs({
+      background: 'skyblue',
+      radius: 55
+    });
+    stage.render();
+  }
+  hoverParent.onHoverOut = () => {
+    hoverParent.setAttrs({
+      background: 'white',
+      radius: 50
+    });
+    stage.render();
+  }
+
+  const hoverChild = new Circle({x: 800, y: 620, radius: 30, drag: true, background: 'white', borderColor: 'black'});
+  stage.appendElement(hoverChild);
+  hoverChild.onHover = () => {
+    hoverChild.setAttrs({
+      background: 'orange',
+      radius: 40
+    });
+    stage.render();
+  }
+  hoverChild.onHoverOut = () => {
+    hoverChild.setAttrs({
+      background: 'white',
+      radius: 30
+    });
+    stage.render();
   }
 
   // 蜡烛图
