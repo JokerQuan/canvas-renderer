@@ -114,6 +114,7 @@ class Stage {
     this._canvas.addEventListener('mousemove', (e) => {
       targetEle = this._pointInWitchElement(e.offsetX, e.offsetY);
       if (targetEle && !isHover) {
+        document.body.style.cursor = 'pointer';
         hoveredEle = targetEle;
         isHover = true;
         hoveredEle.onHover();
@@ -126,6 +127,7 @@ class Stage {
           hoveredEle.onHover();
         }
         if (!hoveredEle.containPoint(e.offsetX, e.offsetY)) {
+          document.body.style.cursor = 'default';
           hoveredEle.onHoverOut();
           isHover = false;
           hoveredEle = null;
