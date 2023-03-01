@@ -19,7 +19,7 @@ const renderer = new CanvasRenderer('#k-line', {
   canvasDrag: 'horizontal'
 });
 
-const { canvaWidth, canvaHeight } = renderer.getCanvasSize();
+const { canvasWidth, canvasHeight } = renderer.getCanvasSize();
 
 let perCandleWidth = canvaWidth / renderNum;
 let perValueHeight = 0; //单位数值占高度px

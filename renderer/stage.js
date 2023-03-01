@@ -173,8 +173,8 @@ class Stage {
 
   getCanvasSize() {
     return {
-      canvaWidth: this._canvas.width,
-      canvaHeight: this._canvas.height
+      canvasWidth: this._canvas.width,
+      canvasHeight: this._canvas.height
     }
   }
 
