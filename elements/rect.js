@@ -11,7 +11,10 @@ class Rect extends Shape{
   }
 
   render() {
-    let { ctx, x, y, width, height, background, style, lineWidth = 1, backgroundImage } = this;
+    let { ctx, x, y, width, height, background = 'black', opacity, style, lineWidth = 1, backgroundImage } = this;
+    
+    ctx.globalAlpha = opacity;
+    
     if (typeof background !== 'string') {
       const colors = background.direction === 'left' ? background.colors.toReversed() : background.colors;
       background = ctx.createLinearGradient(x, y, x + width, y);
@@ -31,5 +34,7 @@ class Rect extends Shape{
     if (backgroundImage) {
       ctx.drawImage(backgroundImage, x, y, width, height);
     }
+
+    ctx.globalAlpha = 1;
   }
 }

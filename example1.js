@@ -70,6 +70,7 @@ const example1 = () => {
   const rect1 = new Rect({x: 500, y: 400, width: 150, height: 150, drag: true, background: linear});
   stage.appendElement(rect1);
 
+  // 多边形测试
   const points = [
     {x: 500, y:600},
     {x: 650, y:600},
@@ -83,13 +84,24 @@ const example1 = () => {
     readFileToSetBackground(rect2)
   }
 
-  // 径向渐变测试
+  // 透明度测试
+  const tPoints = [
+    {x: 100, y:400},
+    {x: 150, y:500},
+    {x: 10, y:550},
+  ]
+  const triangle = new Polygon({points: tPoints, drag: true, background: 'orange', opacity: 0.3});
+  stage.appendElement(triangle);
 
+  // 径向渐变测试
   const radial = {
-    colors: ['#2CD8D599', '#6B8DD699', '#8E37D766']
+    colors: ['#2CD8D5', '#6B8DD6', '#8E37D7']
   }
   const circleR = new Circle({x: 600, y: 200, radius: 80, background: radial, drag: true});
   stage.appendElement(circleR);
+  circleR.onClick = () => {
+    circleR.setAttrs({opacity: 0.5});
+  }
 
   // 图片背景测试
   const imgRect = new Rect({x: 700, y: 400, width: 150, height: 150, drag: true, background: linear, style:'stroke'});

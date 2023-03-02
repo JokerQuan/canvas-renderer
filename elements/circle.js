@@ -12,7 +12,10 @@ class Circle extends Shape{
   }
 
   render() {
-    let { ctx, x, y, radius, background, borderColor, backgroundImage } = this;
+    let { ctx, x, y, radius, background = 'white', borderColor = 'black', opacity, backgroundImage } = this;
+    
+    ctx.globalAlpha = opacity;
+    
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
     if (background && typeof background !== 'string') {
@@ -37,5 +40,7 @@ class Circle extends Shape{
       ctx.stroke();
       ctx.closePath();
     }
+
+    ctx.globalAlpha = 1;
   }
 }

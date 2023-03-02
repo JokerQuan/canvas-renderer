@@ -8,7 +8,7 @@ class Polygon extends Shape{
    */
   constructor(options) {
     super(options);
-    this.type = 'rect';
+    this.type = options.type || 'polygon';
     this._init();
   }
 
@@ -57,7 +57,9 @@ class Polygon extends Shape{
   }
 
   render() {
-    let { ctx, points, x, y, width, height, background, style, lineWidth = 1, backgroundImage } = this;
+    let { ctx, points, x, y, width, height, background = 'white', opacity, style, lineWidth = 1, backgroundImage } = this;
+
+    ctx.globalAlpha = opacity;
 
     // 设置渐变
     if (typeof background !== 'string') {
@@ -85,5 +87,7 @@ class Polygon extends Shape{
       ctx.drawImage(backgroundImage, x - width / 2, y - height / 2, width, height);
       ctx.restore();
     }
+
+    ctx.globalAlpha = 1;
   }
 }

@@ -1,6 +1,7 @@
 class Shape extends Node {
   constructor(options) {
     super(options);
+    this.opacity = options.opacity ? options.opacity : 1.0;
   }
 
   _setPath(ctx, points) {

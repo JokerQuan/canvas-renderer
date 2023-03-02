@@ -6,7 +6,10 @@ class Bezier extends Shape{
   }
 
   render() {
-    const { ctx, x, y, ex, ey, c1x, c1y, c2x, c2y, lineWidth, color } = this;
+    const { ctx, x, y, ex, ey, c1x, c1y, c2x, c2y, lineWidth = 1, opacity, color = 'black' } = this;
+    
+    ctx.globalAlpha = opacity;
+    
     ctx.lineWidth = lineWidth;
     ctx.strokeStyle = color;
     ctx.beginPath();
@@ -18,5 +21,7 @@ class Bezier extends Shape{
     );
     ctx.stroke();
     ctx.closePath();
+
+    ctx.globalAlpha = 1;
   }
 }
