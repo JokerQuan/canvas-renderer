@@ -70,6 +70,19 @@ const example1 = () => {
   const rect1 = new Rect({x: 500, y: 400, width: 150, height: 150, drag: true, background: linear});
   stage.appendElement(rect1);
 
+  const points = [
+    {x: 500, y:600},
+    {x: 650, y:600},
+    {x: 650, y:750},
+    {x: 550, y:800},
+    {x: 500, y:750},
+  ]
+  const rect2 = new Polygon({points, drag: true, background: linear});
+  stage.appendElement(rect2);
+  rect2.onClick = () => {
+    readFileToSetBackground(rect2)
+  }
+
   // 径向渐变测试
 
   const radial = {
