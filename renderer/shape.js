@@ -2,17 +2,13 @@ class Shape extends Node {
   constructor(options) {
     super(options);
     this.opacity = options.opacity ? options.opacity : 1.0;
+    // 旋转角度
+    this.rotate = typeof options.rotate === 'number' ? options.rotate : 0;
   }
 
-  _setPath(ctx, points) {
-    ctx.beginPath();
-    points.forEach((p, index) => {
-      if (index === 0) {
-        ctx.moveTo(p.x, p.y);
-      } else {
-        ctx.lineTo(p.x, p.y)
-      }
-    });
-    ctx.closePath(); 
+  _rotate(ctx, angle, x, y) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle * Math.PI / 180);
   }
 }

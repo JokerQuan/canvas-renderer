@@ -39,6 +39,28 @@ class Polygon extends Shape{
     this.height = maxY - minY;
   }
 
+  _setPath(ctx, points, x = 0, y = 0) {
+    ctx.beginPath();
+    points.forEach((p, index) => {
+      if (index === 0) {
+        ctx.moveTo(p.x - x, p.y - y);
+      } else {
+        ctx.lineTo(p.x - x, p.y - y)
+      }
+    });
+    ctx.closePath(); 
+  }
+
+  /**
+   * pathPoints： canvas 旋转后，多边形顶点也需要旋转，用于点击、拖拽的命中判断
+   */
+  _setPathPoints() {
+    const { points, rotate = 0, x, y } = this;
+    this.pathPoints = points.map(p => {
+      return Utils.rotatePoint(p.x, p.y, x, y, rotate);
+    });
+  }
+
   onDrag(x, y) {
     const offsetX = x - this.x;
     const offsetY = y - this.y;
@@ -48,30 +70,37 @@ class Polygon extends Shape{
       p.x += offsetX;
       p.y += offsetY;
     });
+    this.pathPoints.forEach(p => {
+      p.x += offsetX;
+      p.y += offsetY;
+    });
   }
 
   containPoint(px, py) {
-    const { ctx, points } = this;
-    this._setPath(ctx, points);
+    const { ctx, pathPoints } = this;
+    this._setPath(ctx, pathPoints);
     return ctx.isPointInPath(px, py);
   }
 
   render() {
-    let { ctx, points, x, y, width, height, background = 'white', opacity, style, lineWidth = 1, backgroundImage } = this;
+    let { ctx, points, x, y, width, height, background = 'white', opacity, rotate = 0, style, lineWidth = 1, backgroundImage } = this;
 
     ctx.globalAlpha = opacity;
+
+    this._rotate(ctx, rotate, x, y);
 
     // 设置渐变
     if (typeof background !== 'string') {
       const colors = background.direction === 'left' ? background.colors.toReversed() : background.colors;
-      background = ctx.createLinearGradient(x - width / 2, y, x + width / 2, y);
+      background = ctx.createLinearGradient( - width / 2, y,  + width / 2, y);
       const step = 1 / (colors.length - 1);
       for(let i = 0; i < colors.length; i++) {
         background.addColorStop(step * i, colors[i]);
       }
     }
 
-    this._setPath(ctx, points);
+    this._setPathPoints();
+    this._setPath(ctx, points, x, y);
 
     if (style === 'stroke') {
       ctx.lineWidth = lineWidth;
@@ -84,10 +113,12 @@ class Polygon extends Shape{
     if (backgroundImage) {
       ctx.save();
       ctx.clip();
-      ctx.drawImage(backgroundImage, x - width / 2, y - height / 2, width, height);
+      ctx.drawImage(backgroundImage,  - width / 2,  - height / 2, width, height);
       ctx.restore();
     }
-
+    
+    ctx.restore();
+    
     ctx.globalAlpha = 1;
   }
 }

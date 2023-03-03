@@ -73,15 +73,25 @@ const example1 = () => {
   // 多边形测试
   const points = [
     {x: 500, y:600},
-    {x: 650, y:600},
-    {x: 650, y:750},
-    {x: 550, y:800},
+    {x: 550, y:600},
+    {x: 550, y:750},
+    {x: 520, y:800},
     {x: 500, y:750},
   ]
-  const rect2 = new Polygon({points, drag: true, background: linear});
+  const rect2 = new Polygon({points, drag: true, background: linear, rotate: 45});
   stage.appendElement(rect2);
   rect2.onClick = () => {
     readFileToSetBackground(rect2)
+  }
+  rect2.onClick = () => {
+    const anim = new Anim(rect2, {
+      rotate: rect2.rotate + 50
+    }, 1000, Tween.linear);
+    anim.start();
+    anim.onAnim = (v) => {
+      rect2.setAttrs(v);
+      stage.render();
+    };
   }
 
   // 透明度测试
