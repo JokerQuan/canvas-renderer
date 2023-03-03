@@ -15,16 +15,16 @@ const example2 = () => {
 
   const startStates0 = data[0].map((d, index) => {
     return {
-      x: (index + 0.5) * perXWidth - halfWidth, 
-      y: canvasHeight - perYHeight * d, 
+      x: (index + 0.5) * perXWidth - halfWidth / 2, 
+      y: canvasHeight - perYHeight * d / 2, 
       width: halfWidth, 
       height: perYHeight * d, 
     };
   })
   const startStates1 = data[1].map((d, index) => {
     return {
-      x: (index + 0.5) * perXWidth, 
-      y: canvasHeight - perYHeight * d, 
+      x: (index + 0.5) * perXWidth + halfWidth / 2, 
+      y: canvasHeight - perYHeight * d / 2, 
       width: halfWidth, 
       height: perYHeight * d, 
     };
@@ -32,16 +32,16 @@ const example2 = () => {
   
   const endStates0 = data[0].map((d, index) => {
     return {
-      x: (index + 0.5) * perXWidth - halfWidth, 
-      y: canvasHeight - perYHeight * d, 
+      x: (index + 0.5) * perXWidth, 
+      y: canvasHeight - perYHeight * d / 2, 
       width: halfWidth * 2, 
       height: perYHeight * d, 
     };
   })
   const endStates1 = data[1].map((d, index) => {
     return {
-      x: (index + 0.5) * perXWidth - halfWidth, 
-      y: canvasHeight - perYHeight * (d + data[0][index]), 
+      x: (index + 0.5) * perXWidth, 
+      y: canvasHeight - perYHeight * (d / 2 + data[0][index]), 
       width: halfWidth * 2, 
       height: perYHeight * d, 
     };

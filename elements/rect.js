@@ -1,40 +1,39 @@
-class Rect extends Shape{
+class Rect extends Polygon{
 
   constructor(options) {
+    options.type = 'rect'
     super(options);
-    this.type = 'rect';
+    // node 构造函数会调用setAttrs，所以这里不用再手动初始化矩形节点
+    // this.setAttrs(options)
   }
 
-  containPoint(px, py) {
-    const { x, y, width, height } = this;
-    return px >= x && px <= x + width && py >= y && py <= y + height;
+  _getPoints(x, y, width, height) {
+    const points = [{
+      x: x - width / 2,
+      y: y - height / 2
+    }, {
+      x: x + width / 2,
+      y: y - height / 2
+    }, {
+      x: x + width / 2,
+      y: y + height / 2
+    }, {
+      x: x - width / 2,
+      y: y + height / 2
+    }];
+    return points;
   }
 
-  render() {
-    let { ctx, x, y, width, height, background = 'black', opacity, style, lineWidth = 1, backgroundImage } = this;
-    
-    ctx.globalAlpha = opacity;
-    
-    if (typeof background !== 'string') {
-      const colors = background.direction === 'left' ? background.colors.toReversed() : background.colors;
-      background = ctx.createLinearGradient(x, y, x + width, y);
-      const step = 1 / (colors.length - 1);
-      for(let i = 0; i < colors.length; i++) {
-        background.addColorStop(step * i, colors[i]);
-      }
+  setAttrs(attrs) {
+    let { x, y, width, height } = attrs;
+    // 如果改变矩形位置、大小，需要根据已有数据重新计算顶点坐标
+    if (x !== undefined || y !== undefined || width !== undefined || height !== undefined) {
+      if (x === undefined) x = this.x;
+      if (y === undefined) y = this.y;
+      if (width === undefined) width = this.width;
+      if (height === undefined) height = this.height;
+      attrs.points = this._getPoints(x, y, width, height);
     }
-    if (style === 'stroke') {
-      ctx.lineWidth = lineWidth;
-      ctx.strokeStyle = background
-      ctx.strokeRect(x, y, width, height);
-    } else {
-      ctx.fillStyle = background;
-      ctx.fillRect(x, y, width, height);
-    }
-    if (backgroundImage) {
-      ctx.drawImage(backgroundImage, x, y, width, height);
-    }
-
-    ctx.globalAlpha = 1;
+    super.setAttrs.call(this, attrs);
   }
 }

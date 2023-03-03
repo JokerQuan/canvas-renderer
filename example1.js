@@ -53,7 +53,7 @@ const example1 = () => {
   }
 
   // 矩形
-  const rect = new Rect({x: 10, y: 10, width: 50, height: 60, drag: true, background: 'skyblue'});
+  const rect = new Rect({x: 30, y: 40, width: 50, height: 60, drag: true, background: 'skyblue'});
   rect.onClick = () => {
     rect.setAttrs({background: rect.background === 'skyblue' ? '#7367F0' : 'skyblue'})
   }
