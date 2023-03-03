@@ -39,6 +39,9 @@ class Polygon extends Shape{
     this.height = maxY - minY;
   }
 
+  /**
+   * 用于绘图的path，基于canvas原点绘图
+   */
   _setPath(ctx, points, x = 0, y = 0) {
     ctx.beginPath();
     points.forEach((p, index) => {
@@ -79,6 +82,10 @@ class Polygon extends Shape{
   containPoint(px, py) {
     const { ctx, pathPoints } = this;
     this._setPath(ctx, pathPoints);
+    // debug 
+    // ctx.lineWidth = 1;
+    // ctx.strokeStyle = 'black';
+    // ctx.stroke();
     return ctx.isPointInPath(px, py);
   }
 
@@ -88,6 +95,8 @@ class Polygon extends Shape{
     ctx.globalAlpha = opacity;
 
     this._rotate(ctx, rotate, x, y);
+    this._setPathPoints();
+    this._setPath(ctx, points, x, y);
 
     // 设置渐变
     if (typeof background !== 'string') {
@@ -99,8 +108,6 @@ class Polygon extends Shape{
       }
     }
 
-    this._setPathPoints();
-    this._setPath(ctx, points, x, y);
 
     if (style === 'stroke') {
       ctx.lineWidth = lineWidth;

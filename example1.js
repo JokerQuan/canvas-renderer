@@ -119,6 +119,14 @@ const example1 = () => {
   imgRect.onClick = () => {
     readFileToSetBackground(imgRect)
   }
+  imgRect.onHover = () => {
+    imgRect.setAttrs({rotate: 30});
+    stage.render();
+  }
+  imgRect.onHoverOut = () => {
+    imgRect.setAttrs({rotate: 0});
+    stage.render();
+  }
 
   const imgCircle = new Circle({x: 800, y: 200, radius: 80, drag: true, borderColor: 'black'});
   stage.appendElement(imgCircle);
