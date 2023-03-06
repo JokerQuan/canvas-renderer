@@ -72,8 +72,8 @@ const example1 = () => {
 
   // 多边形测试
   const points = [
-    {x: 500, y:600},
-    {x: 550, y:600},
+    {x: 500, y:630},
+    {x: 550, y:650},
     {x: 550, y:750},
     {x: 520, y:800},
     {x: 500, y:750},
@@ -92,6 +92,20 @@ const example1 = () => {
       rect2.setAttrs(v);
       stage.render();
     };
+  }
+  rect2.onHover = () => {
+    rect2.setAttrs({
+      scaleX: 1.2,
+      scaleY: 1.2
+    });
+    stage.render();
+  }
+  rect2.onHoverOut = () => {
+    rect2.setAttrs({
+      scaleX: 1,
+      scaleY: 1
+    });
+    stage.render();
   }
 
   // 透明度测试

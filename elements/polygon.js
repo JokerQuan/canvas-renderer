@@ -37,18 +37,24 @@ class Polygon extends Shape{
     this.y = maxY - (maxY - minY) / 2;
     this.width = maxX - minX;
     this.height = maxY - minY;
+
+    this.scaleX = this.scaleX || 1;
+    this.scaleY = this.scaleY || 1;
   }
 
   /**
-   * 用于绘图的path，基于canvas原点绘图
+   * 设置基于canvas原点旋转后的绘图路径
    */
-  _setPath(ctx, points, x = 0, y = 0) {
+  _setRenderPath() {
+    const { ctx, points, scaleX, scaleY, x, y } = this;
     ctx.beginPath();
     points.forEach((p, index) => {
+      const tx = (p.x - x) * scaleX;
+      const ty = (p.y - y) * scaleY;
       if (index === 0) {
-        ctx.moveTo(p.x - x, p.y - y);
+        ctx.moveTo(tx, ty);
       } else {
-        ctx.lineTo(p.x - x, p.y - y)
+        ctx.lineTo(tx, ty);
       }
     });
     ctx.closePath(); 
@@ -58,10 +64,22 @@ class Polygon extends Shape{
    * pathPoints： canvas 旋转后，多边形顶点也需要旋转，用于点击、拖拽的命中判断
    */
   _setPathPoints() {
-    const { points, rotate = 0, x, y } = this;
+    const { ctx, points, rotate = 0, x, y, scaleX, scaleY } = this;
     this.pathPoints = points.map(p => {
-      return Utils.rotatePoint(p.x, p.y, x, y, rotate);
+      const tx = (p.x - x) * scaleX + x;
+      const ty = (p.y - y) * scaleY + y;
+      return Utils.rotatePoint(tx, ty, x, y, rotate);
     });
+
+    ctx.beginPath();
+    this.pathPoints.forEach((p, index) => {
+      if (index === 0) {
+        ctx.moveTo(p.x, p.y);
+      } else {
+        ctx.lineTo(p.x, p.y);
+      }
+    });
+    ctx.closePath(); 
   }
 
   onDrag(x, y) {
@@ -80,8 +98,8 @@ class Polygon extends Shape{
   }
 
   containPoint(px, py) {
-    const { ctx, pathPoints } = this;
-    this._setPath(ctx, pathPoints);
+    const { ctx } = this;
+    this._setPathPoints();
     // debug 
     // ctx.lineWidth = 1;
     // ctx.strokeStyle = 'black';
@@ -90,13 +108,12 @@ class Polygon extends Shape{
   }
 
   render() {
-    let { ctx, points, x, y, width, height, background = 'white', opacity, rotate = 0, style, lineWidth = 1, backgroundImage } = this;
+    let { ctx, x, y, width, height, background = 'white', opacity, rotate = 0, style, lineWidth = 1, backgroundImage } = this;
 
     ctx.globalAlpha = opacity;
 
     this._rotate(ctx, rotate, x, y);
-    this._setPathPoints();
-    this._setPath(ctx, points, x, y);
+    this._setRenderPath();
 
     // 设置渐变
     if (typeof background !== 'string') {
